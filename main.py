@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
-from .config import *
+from config import *
 import csv
 import time
 
@@ -62,6 +62,16 @@ class Ecommerce:
         self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]'))
         self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]').click()
         time.sleep(3)
+        self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]').click()
+        time.sleep(3)
+        self.driver.find_element(By.ID,'email-input').send_keys(EMAIL)
+        self.driver.find_element(By.ID,'email-confirmation-input').send_keys(EMAIL)
+        self.driver.find_element(By.ID,'termsAgreement-true').click()
+        self.driver.find_element(By.XPATH,'//button[contains(@class,"kit__button")]').click()
+        self.driver.find_element(By.ID,'cardnumber').send_keys(CARD_NUMBER)
+        self.driver.find_element(By.ID,'expiry').send_keys(CARD_VALIDITY)
+        self.driver.find_element(By.ID,'cvc').send_keys(CARD_CVV)
+        self.driver.find_element(By.ID,'pay-submit').click()
         self.driver.quit()
 
 ignis=Ecommerce()
