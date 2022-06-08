@@ -2,6 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 from config import *
 import csv
 import time
@@ -55,7 +57,6 @@ class Ecommerce:
                     if element:break
                 except:
                     ActionChains(self.driver).move_to_element(self.driver.find_element(By.XPATH,f'(//div[@data-testid="charge-card-{plan}"])[{order}]')).click().perform()
-            time.sleep(5)
             if order<len(details):
                 self.driver.find_element(By.XPATH,'//button[contains(@class,"btn-danger") and contains(@class,"kit__button")]').click()
                 order+=1
@@ -66,12 +67,19 @@ class Ecommerce:
         time.sleep(3)
         self.driver.find_element(By.ID,'email-input').send_keys(EMAIL)
         self.driver.find_element(By.ID,'email-confirmation-input').send_keys(EMAIL)
-        self.driver.find_element(By.ID,'termsAgreement-true').click()
+        self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.ID,'_termsAgreement-true'))
+        self.driver.find_element(By.ID,'_termsAgreement-true').click()
+        self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.ID,'card_payment_radio_array_option'))
+        self.driver.find_element(By.ID,'card_payment_radio_array_option').click()
+        self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.XPATH,'//button[contains(@class,"kit__button")]'))
         self.driver.find_element(By.XPATH,'//button[contains(@class,"kit__button")]').click()
+        element=WebDriverWait(self.driver,10).until(ec.url_changes('https://edalnice.cz/en/bulk-purchase/index.html#/multi_eshop/payment'))
+        WebDriverWait(self.driver,10).until(ec.visibility_of_element_located(((By.ID,'cardnumber'))))
         self.driver.find_element(By.ID,'cardnumber').send_keys(CARD_NUMBER)
         self.driver.find_element(By.ID,'expiry').send_keys(CARD_VALIDITY)
         self.driver.find_element(By.ID,'cvc').send_keys(CARD_CVV)
         self.driver.find_element(By.ID,'pay-submit').click()
+        time.sleep(100)
         self.driver.quit()
 
 ignis=Ecommerce()
