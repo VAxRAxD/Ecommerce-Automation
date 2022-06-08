@@ -10,7 +10,8 @@ import time
 
 class Ecommerce:
     def __init__(self):
-        self.driver=webdriver.Firefox()
+        self.driver=webdriver.Edge()
+        self.driver.maximize_window()
         self.file=open('./sample.csv')
     def readData(self):
         reader=csv.reader(self.file)
@@ -38,6 +39,7 @@ class Ecommerce:
             self.driver.find_element(By.XPATH,f'(//input[@type="text" and @class="order-0 flex-grow-1"])[{order}]').send_keys(data[2])
             self.driver.find_element(By.XPATH,f'(//input[@type="text" and @class="order-0 flex-grow-1"])[{order}]').send_keys(Keys.RETURN)
             if data[3]!="":
+                self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.ID,f'alternative_fuel_type_checkbox_{order-1}'))
                 self.driver.find_element(By.ID,f'alternative_fuel_type_checkbox_{order-1}').click()
                 if data[3]=="Natural Gas":
                     self.driver.find_element(By.ID,f'natural_gas_radio_array_option_{order-1}').click()
@@ -73,13 +75,16 @@ class Ecommerce:
         self.driver.find_element(By.ID,'card_payment_radio_array_option').click()
         self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.XPATH,'//button[contains(@class,"kit__button")]'))
         self.driver.find_element(By.XPATH,'//button[contains(@class,"kit__button")]').click()
-        element=WebDriverWait(self.driver,10).until(ec.url_changes('https://edalnice.cz/en/bulk-purchase/index.html#/multi_eshop/payment'))
+        WebDriverWait(self.driver,10).until(ec.url_changes('https://edalnice.cz/en/bulk-purchase/index.html#/multi_eshop/payment'))
         WebDriverWait(self.driver,10).until(ec.visibility_of_element_located(((By.ID,'cardnumber'))))
         self.driver.find_element(By.ID,'cardnumber').send_keys(CARD_NUMBER)
         self.driver.find_element(By.ID,'expiry').send_keys(CARD_VALIDITY)
         self.driver.find_element(By.ID,'cvc').send_keys(CARD_CVV)
         self.driver.find_element(By.ID,'pay-submit').click()
-        time.sleep(100)
+        try:
+            WebDriverWait(self.driver,20).until(ec.visibility_of_element_located((By.XPATH,'//p[@id="system-warning" and @class="show"]')))
+        except:
+            pass
         self.driver.quit()
 
 ignis=Ecommerce()
