@@ -6,12 +6,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from config import *
 import csv
-import time
 
 class Ecommerce:
     def __init__(self):
-        self.driver=webdriver.Edge()
-        self.driver.maximize_window()
+        self.driver=webdriver.Firefox()
         self.file=open('./sample.csv')
     def readData(self):
         reader=csv.reader(self.file)
@@ -64,9 +62,7 @@ class Ecommerce:
                 order+=1
         self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]'))
         self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]').click()
-        time.sleep(3)
         self.driver.find_element(By.XPATH,'//button[contains(@class,"w-100")]').click()
-        time.sleep(3)
         self.driver.find_element(By.ID,'email-input').send_keys(EMAIL)
         self.driver.find_element(By.ID,'email-confirmation-input').send_keys(EMAIL)
         self.driver.execute_script("arguments[0].scrollIntoView();",self.driver.find_element(By.ID,'_termsAgreement-true'))
